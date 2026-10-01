@@ -1,0 +1,29 @@
+# Phase 3 multi-task SFT alignment.
+run:
+  name: tech0-50m-sft
+  out_dir: checkpoints/sft
+  seed: 1337
+  device: auto
+
+model_dir: checkpoints/pretrain/step_best.pt
+
+data:
+  sft_jsonl: data/sft.jsonl      # {"messages": [...]} OR {"instruction","input","output"}
+  target_ratio: 0.65
+  general_ratio: 0.35
+  seq_len: 2048
+  mask_prompt_loss: true         # only train on assistant tokens
+
+training:
+  batch_size: 16
+  grad_accum: 4
+  max_steps: 3000
+  lr: 2.0e-5
+  min_lr: 1.0e-6
+  warmup_steps: 100
+  weight_decay: 0.1
+  grad_checkpointing: true
+  log_interval: 10
+  eval_interval: 250
+  eval_iters: 25
+  ckpt_interval: 250

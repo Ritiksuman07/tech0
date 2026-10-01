@@ -1,0 +1,42 @@
+# Phase 1 foundation pre-training.
+# Real-run target: 100B-200B tokens (configs below). Default smoke run: a few million.
+run:
+  name: tech0-50m-pretrain
+  out_dir: checkpoints/pretrain
+  seed: 1337
+  device: auto            # auto | cuda | cpu
+  dtype: auto             # auto -> bf16 on Ampere+, else fp16
+  compile: false
+
+model_config: configs/model_50m.yaml
+
+data:
+  train_bin: data/train.bin
+  val_bin: data/val.bin
+  seq_len: 2048
+  tokenizer_dir: data/tokenizer
+
+training:
+  batch_size: 24          # per-step micro batch (tokens = batch_size * seq_len)
+  grad_accum: 8
+  max_steps: 20000
+  lr: 3.0e-4
+  min_lr: 1.0e-5
+  warmup_steps: 500
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.95
+  grad_clip: 1.0
+  grad_checkpointing: true
+  eval_interval: 500
+  eval_iters: 50
+  log_interval: 10
+  ckpt_interval: 500
+  save_best: true
+  num_workers: 0
+
+# Curriculum targets from the design doc (used by the data mixer).
+curriculum:
+  phase1: {target_ratio: 0.25, general_ratio: 0.75, tokens: 150000000000}
+  phase2: {target_ratio: 0.70, general_ratio: 0.30, tokens: 30000000000}
+  phase3: {target_ratio: 0.65, general_ratio: 0.35, tokens: 8000000}

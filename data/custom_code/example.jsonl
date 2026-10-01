@@ -1,0 +1,2 @@
+{"prompt": "Write a function `add(a, b)` that returns the sum of two numbers.", "test_list": ["assert add(2, 3) == 5", "assert add(-1, 1) == 0"]}
+{"prompt": "Write a function `is_palindrome(s)` that returns True if the string is a palindrome.", "test_list": ["assert is_palindrome('racecar') is True", "assert is_palindrome('abc') is False"]}

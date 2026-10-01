@@ -1,0 +1,28 @@
+# Evaluation suite: 8 benchmarks across language understanding, perplexity and code.
+run:
+  out_dir: eval_results
+  device: auto
+  seed: 1234
+
+model_dir: checkpoints/pretrain/step_best.pt
+tokenizer_dir: data/tokenizer
+batch_size: 8
+
+# Multiple-choice, accuracy via length-normalized loglikelihood.
+tasks:
+  hellaswag: {split: validation, limit: null}
+  arc_easy:  {split: test,       limit: null}
+  piqa:      {split: validation, limit: null}
+  winogrande: {split: validation, limit: null}
+
+# Language modelling health check.
+perplexity:
+  name: wikitext103
+  split: test
+  limit: 1000
+
+# Code generation, pass@1 via sandboxed execution.
+code:
+  humaneval: {limit: null}
+  mbpp:      {limit: null}
+  custom:    {tests_dir: data/custom_code, limit: null}
