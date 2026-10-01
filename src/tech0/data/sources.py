@@ -22,7 +22,7 @@ SOURCES: dict[str, dict] = {
     },
     "cosmopedia": {
         "name": "HuggingFaceTB/cosmopedia",
-        "config": "web_v1",
+        "config": "web_samples_v2",
         "split": "train",
         "text_key": "text",
     },
@@ -33,10 +33,10 @@ SOURCES: dict[str, dict] = {
         "text_key": "text",
     },
     "code": {
-        "name": "bigcode/the-stack-smol",
+        "name": "codeparrot/codeparrot-clean",
         "config": None,
         "split": "train",
-        "text_key": "content",
+        "text_key": "code",
     },
 }
 
@@ -80,8 +80,18 @@ def mixed_stream(
     max_docs_per_source: int | None = None,
     split: str | None = None,
 ) -> Iterator[str]:
-    """Interleave multiple HF sources (simple round-robin at the doc level)."""
-    generators = [hf_stream(s, split=split, max_docs=max_docs_per_source) for s in sources]
+    """Interleave multiple HF sources (round-robin at the doc level).
+
+    A source that fails to load (gated, renamed, offline) is skipped with a
+    warning instead of aborting the whole run.
+    """
+    def safe(source: str) -> Iterator[str]:
+        try:
+            yield from hf_stream(source, split=split, max_docs=max_docs_per_source)
+        except Exception as exc:  # noqa: BLE001
+            print(f"[sources] skipping '{source}': {exc}")
+
+    generators = [safe(s) for s in sources]
     active = list(generators)
     while active:
         nxt = []

@@ -52,10 +52,10 @@ def main() -> None:
         tok_vocab = args.tokenizer_vocab or 32000
         max_tokens = args.max_tokens
         print(f"[data] sampling tokenizer corpus from {args.sources}")
-        tok_sample = list(islice(mixed_stream(args.sources, max_docs=args.max_docs), 20000))
+        tok_sample = list(islice(mixed_stream(args.sources, max_docs_per_source=args.max_docs), 20000))
 
         def stream():
-            return mixed_stream(args.sources, max_docs=args.max_docs)
+            return mixed_stream(args.sources, max_docs_per_source=args.max_docs)
 
     tok_path = tok_dir / "tokenizer.json"
     if args.retrain or not tok_path.exists():
