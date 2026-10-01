@@ -73,7 +73,7 @@ python -m tech0.eval.run_all     --config configs/eval.yaml     --smoke
 
 ```bash
 # Colab
-git clone <your-repo> /content/tech0 && cd /content/tech0
+git clone https://github.com/Ritiksuman07/tech0.git /content/tech0 && cd /content/tech0
 bash scripts/colab_bootstrap.sh
 
 # Kaggle
